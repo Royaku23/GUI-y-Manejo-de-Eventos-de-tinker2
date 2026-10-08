@@ -5,7 +5,7 @@ Mini-app de escritorio para practicar el manejo de eventos de botón, teclado y 
 ## Dependencias
 
 - Python 3.10 o superior
-- Tkinter (viene incluido con Python; en Linux: `sudo apt install python3-tk`)
+- Tkinter 
 - No requiere paquetes externos
 
 ## Cómo ejecutar
