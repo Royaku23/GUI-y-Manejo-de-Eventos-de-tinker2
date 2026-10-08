@@ -25,7 +25,7 @@ Al agregar la primera nota se crea el archivo `notas.json` en la misma carpeta q
 - Editar una nota con doble clic
 - Búsqueda: el campo **Buscar** resalta en amarillo las notas que coinciden
 - Persistencia: las notas se guardan y se cargan desde `notas.json`
-- Tema claro/oscuro con el botón **Tema** (se recuerda al reabrir)
+- Tema claro/oscuro con el botón **Tema** 
 
 ### Eventos manejados
 
@@ -41,4 +41,29 @@ Al agregar la primera nota se crea el archivo `notas.json` en la misma carpeta q
 ## Controles usados
 
 `texto`, `Boton`, `Lista`, `Etiqueta`, `Marco`.
+
+
+## Capturas de pantalla
+
+Agrega aquí tus capturas de la app en ejecución:
+
+1. Tema claro con varias notas
+   <img width="2262" height="1302" alt="imagen" src="https://github.com/user-attachments/assets/e7c2fe4f-933d-4243-aeb1-43767251a8bc" />
+
+3. Tema oscuro
+   <img width="2377" height="1327" alt="imagen" src="https://github.com/user-attachments/assets/7fadade8-69da-463f-aa6c-454d9ef485a1" />
+
+5. Búsqueda con notas resaltadas
+   <img width="1927" height="1256" alt="imagen" src="https://github.com/user-attachments/assets/5d7603d1-b365-4f2d-8e96-f1bcce74ef5e" />
+
+7. Diálogo de edición
+   
+   Aqui le apretamos doble click a la nota que queramos editar, en este caso fue la de ¨Pendientes 2¨
+   <img width="2037" height="1250" alt="imagen" src="https://github.com/user-attachments/assets/edf51ad2-39ed-4d1b-b782-ac4ba89bc983" />
+
+   Aqui cambiamos el nombre al que queramos en este caso fue ¨Pendientes 3¨ y luego le damos ¨OK¨ para guardar, y vemos que ya se edito
+   <img width="1997" height="1308" alt="imagen" src="https://github.com/user-attachments/assets/9e5dbeda-bd0d-46e6-ab27-1e30cf2b2cc0" />
+
+   
+   
 
