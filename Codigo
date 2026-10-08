@@ -1,0 +1,148 @@
+import json
+import tkinter as tk
+from pathlib import Path
+from tkinter import simpledialog, messagebox
+
+ARCHIVO = Path(__file__).with_name("notas.json")
+
+TEMAS = {
+    "claro": {"fondo": "#f0f0f0", "texto": "#000000", "campo": "#ffffff", "seleccion": "#0078d7"},
+    "oscuro": {"fondo": "#1e1e1e", "texto": "#f0f0f0", "campo": "#2b2b2b", "seleccion": "#0078d7"},
+}
+
+
+class NotasApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Notas Rápidas (Tkinter)")
+        self.geometry("600x380")
+
+        self.tema = "claro"
+        self.var_contador = tk.StringVar(value="0 notas")
+        self.var_buscar = tk.StringVar()
+
+        self.input = tk.Entry(self)
+        self.input.pack(fill="x", padx=8, pady=8)
+        self.input.bind("<Return>", lambda e: self.agregar())
+
+        frame_btns = tk.Frame(self)
+        frame_btns.pack(fill="x", padx=8)
+        tk.Button(frame_btns, text="Agregar", command=self.agregar).pack(side="left")
+        tk.Button(frame_btns, text="Eliminar", command=self.eliminar).pack(side="left", padx=6)
+        tk.Button(frame_btns, text="Tema", command=self.cambiar_tema).pack(side="left")
+        tk.Label(frame_btns, textvariable=self.var_contador).pack(side="left", padx=12)
+
+        frame_buscar = tk.Frame(self)
+        frame_buscar.pack(fill="x", padx=8, pady=(8, 0))
+        tk.Label(frame_buscar, text="Buscar:").pack(side="left")
+        self.buscar = tk.Entry(frame_buscar, textvariable=self.var_buscar)
+        self.buscar.pack(side="left", fill="x", expand=True, padx=6)
+        self.var_buscar.trace_add("write", lambda *args: self.resaltar_busqueda())
+
+        self.lista = tk.Listbox(self)
+        self.lista.pack(fill="both", expand=True, padx=8, pady=8)
+        self.lista.bind("<Double-Button-1>", self.editar_item)
+
+        self.notas = []
+        self.cargar()
+        self.aplicar_tema()
+        self.actualizar_contador()
+
+    def actualizar_contador(self):
+        n = len(self.notas)
+        self.var_contador.set(f"{n} nota" if n == 1 else f"{n} notas")
+
+    def agregar(self):
+        texto = self.input.get().strip()
+        if texto:
+            self.notas.append(texto)
+            self.lista.insert("end", texto)
+            self.input.delete(0, "end")
+            self.actualizar_contador()
+            self.resaltar_busqueda()
+            self.guardar()
+
+    def eliminar(self):
+        sel = self.lista.curselection()
+        if not sel:
+            messagebox.showinfo("Eliminar", "Selecciona una nota.")
+            return
+        idx = sel[0]
+        self.lista.delete(idx)
+        self.notas.pop(idx)
+        self.actualizar_contador()
+        self.guardar()
+
+    def editar_item(self, event=None):
+        sel = self.lista.curselection()
+        if not sel:
+            return
+        idx = sel[0]
+        actual = self.notas[idx]
+        nuevo = simpledialog.askstring("Editar nota", "Nuevo texto:", initialvalue=actual)
+        if nuevo and nuevo.strip():
+            self.notas[idx] = nuevo.strip()
+            self.lista.delete(idx)
+            self.lista.insert(idx, nuevo.strip())
+            self.resaltar_busqueda()
+            self.guardar()
+
+    def resaltar_busqueda(self):
+        texto = self.var_buscar.get().strip().lower()
+        for i, nota in enumerate(self.notas):
+            if texto and texto in nota.lower():
+                self.lista.itemconfig(i, bg="#ffd54f", fg="#000000")
+            else:
+                self.lista.itemconfig(i, bg="", fg="")
+
+    def widgets(self, padre):
+        for w in padre.winfo_children():
+            yield w
+            yield from self.widgets(w)
+
+    def aplicar_tema(self):
+        t = TEMAS[self.tema]
+        self.configure(bg=t["fondo"])
+        for w in self.widgets(self):
+            clase = w.winfo_class()
+            if clase == "Frame":
+                w.configure(bg=t["fondo"])
+            elif clase == "Label":
+                w.configure(bg=t["fondo"], fg=t["texto"])
+            elif clase == "Entry":
+                w.configure(bg=t["campo"], fg=t["texto"], insertbackground=t["texto"])
+            elif clase == "Listbox":
+                w.configure(
+                    bg=t["campo"], fg=t["texto"],
+                    selectbackground=t["seleccion"], selectforeground="#ffffff",
+                )
+
+    def cambiar_tema(self):
+        self.tema = "oscuro" if self.tema == "claro" else "claro"
+        self.aplicar_tema()
+        self.guardar()
+
+    def cargar(self):
+        if not ARCHIVO.exists():
+            return
+        try:
+            datos = json.loads(ARCHIVO.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            messagebox.showwarning("Notas", "No se pudo leer notas.json.")
+            return
+        self.notas = [str(n) for n in datos.get("notas", [])]
+        tema = datos.get("tema", "claro")
+        self.tema = tema if tema in TEMAS else "claro"
+        for nota in self.notas:
+            self.lista.insert("end", nota)
+
+    def guardar(self):
+        datos = {"tema": self.tema, "notas": self.notas}
+        try:
+            ARCHIVO.write_text(json.dumps(datos, ensure_ascii=False, indent=2), encoding="utf-8")
+        except OSError:
+            messagebox.showwarning("Notas", "No se pudo guardar notas.json.")
+
+
+if __name__ == "__main__":
+    NotasApp().mainloop()
