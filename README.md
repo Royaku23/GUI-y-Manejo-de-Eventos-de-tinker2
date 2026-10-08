@@ -40,7 +40,7 @@ Al agregar la primera nota se crea el archivo `notas.json` en la misma carpeta q
 
 ## Controles usados
 
-`texto`, `Boton`, `Lista`, `Etiqueta`, `Marco`.
+`texto`, `Boton`, `Lista`, `Etiqueta`.
 
 
 ## Capturas de pantalla
